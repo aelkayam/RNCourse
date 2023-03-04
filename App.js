@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -5,17 +6,46 @@ import {
   Button,
   TextInput,
   ScrollView,
+  FlatList,
 } from "react-native";
 
 export default function App() {
+  const [enteredTaskText, setEnteredTaskText] = useState("");
+  const [taskList, setTaskList] = useState([]);
+
+  function taskInputHandler(enteredText) {
+    setEnteredTaskText(enteredText);
+  }
+
+  function addTaskHandler() {
+    setTaskList((currentTaskList) => [
+      ...currentTaskList,
+      { text: enteredTaskText, key: Math.random().toString() },
+    ]);
+    console.log(taskList);
+  }
+
   return (
     <View style={styles.appContainer}>
       <View style={styles.inputContainer}>
-        <TextInput style={styles.textInput} placeholder="Enter new task" />
-        <Button title="Add Task" />
+        <TextInput
+          style={styles.textInput}
+          placeholder="Enter new task"
+          onChangeText={taskInputHandler}
+        />
+        <Button title="Add Task" onPress={addTaskHandler} />
       </View>
       <View style={styles.tasksContainer}>
-        <Text>Your tasks here...</Text>
+        <FlatList
+          data={taskList}
+          renderItem={(itemData) => {
+            return (
+              <View style={styles.taskItem}>
+                <Text style={styles.taskText}>{itemData.item.text}</Text>
+              </View>
+            );
+          }}
+        />
       </View>
     </View>
   );
@@ -47,5 +77,16 @@ const styles = StyleSheet.create({
   },
   tasksContainer: {
     flex: 5,
+  },
+
+  taskItem: {
+    margin: 6,
+    padding: 6,
+    borderRadius: 4,
+    backgroundColor: "mediumpurple",
+  },
+
+  taskText: {
+    color: "white",
   },
 });

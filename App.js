@@ -1,23 +1,13 @@
 import { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TextInput,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import TaskItem from "./components/TaskItem";
+import TaskInput from "./components/TaskInput";
+
+import { StyleSheet, View, FlatList } from "react-native";
 
 export default function App() {
-  const [enteredTaskText, setEnteredTaskText] = useState("");
   const [taskList, setTaskList] = useState([]);
 
-  function taskInputHandler(enteredText) {
-    setEnteredTaskText(enteredText);
-  }
-
-  function addTaskHandler() {
+  function addTaskHandler(enteredTaskText) {
     setTaskList((currentTaskList) => [
       ...currentTaskList,
       { text: enteredTaskText, key: Math.random().toString() },
@@ -25,24 +15,25 @@ export default function App() {
     console.log(taskList);
   }
 
+  function deleteTaskHandler(id) {
+    setTaskList((currentTaskList) => {
+      return currentTaskList.filter((item) => item.key !== id);
+    });
+  }
+
   return (
     <View style={styles.appContainer}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Enter new task"
-          onChangeText={taskInputHandler}
-        />
-        <Button title="Add Task" onPress={addTaskHandler} />
-      </View>
+      <TaskInput onAddTask={addTaskHandler} />
       <View style={styles.tasksContainer}>
         <FlatList
           data={taskList}
           renderItem={(itemData) => {
             return (
-              <View style={styles.taskItem}>
-                <Text style={styles.taskText}>{itemData.item.text}</Text>
-              </View>
+              <TaskItem
+                text={itemData.item.text}
+                id={itemData.item.key}
+                onDeleteItem={deleteTaskHandler}
+              />
             );
           }}
         />
@@ -58,35 +49,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
 
-  inputContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-    marginBottom: 18,
-    borderBottomWidth: 2,
-    borderColor: "#cccccc",
-  },
-
-  textInput: {
-    borderWidth: 1,
-    borderColor: "#cccccc",
-    width: "70%",
-    marginRight: 12,
-    padding: 8,
-  },
   tasksContainer: {
     flex: 5,
-  },
-
-  taskItem: {
-    margin: 6,
-    padding: 6,
-    borderRadius: 4,
-    backgroundColor: "mediumpurple",
-  },
-
-  taskText: {
-    color: "white",
   },
 });

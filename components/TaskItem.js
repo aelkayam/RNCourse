@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
   taskText: {
     padding: 6,
     color: "white",
+    fontSize: 18,
   },
 });
 
